@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { CategoriesModule } from './categories/categories.module';
 
 
 
@@ -19,7 +20,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     // Đăng ký các modules
     UsersModule, 
-    AuthModule,
+    AuthModule, 
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
