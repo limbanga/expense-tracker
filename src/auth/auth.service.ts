@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/users/user.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,6 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<any> {
-
     const userExists = await this.userService.findByUsername(
       registerDto.username,
     );
@@ -30,21 +30,19 @@ export class AuthService {
     if (IsEmailExists) {
       throw new BadRequestException('Email already taken');
     }
-    
-    await this.userService.create(
-      {
-        username: registerDto.username,
-        email: registerDto.email,
-        password: registerDto.password
-      }
-    );
-    
+
+    await this.userService.create({
+      username: registerDto.username,
+      email: registerDto.email,
+      password: registerDto.password,
+    });
+
     return { message: 'User registered successfully' };
   }
 
-  async login(username: string, password: string): Promise<any> {
-    const user = await this.userService.findByUsername(username);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+  async login(loginDto: LoginDto): Promise<any> {
+    const user = await this.userService.findByEmail(loginDto.email);
+    if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
@@ -53,6 +51,7 @@ export class AuthService {
       sub: user.id,
       isAdmin: user.isAdmin,
     };
+    
     return {
       access_token: this.jwtService.sign(payload),
     };
