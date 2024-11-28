@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
-import { UserService } from './users.service';
+import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
@@ -8,12 +8,5 @@ export class UserController {
   @Get()
   async findAll() {
     return this.userService.findAll();
-  }
-
-  @Post()
-  async create(
-    @Body() user: { name: string; email: string; password: string },
-  ) {
-    return this.userService.create(user);
   }
 }
