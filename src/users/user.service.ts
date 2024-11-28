@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './user.entity';
+import { plainToInstance } from 'class-transformer';
+import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class UserService {
@@ -11,8 +13,9 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    return plainToInstance(User, users);
   }
 
   async create(user: Partial<User>): Promise<User> {
